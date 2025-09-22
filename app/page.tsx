@@ -23,9 +23,11 @@ export default function Home() {
         </nav>
         <div className="flex-1 flex flex-col gap-20 w-full p-5 relative">
           <Hero/>
-          <div className={"absolute top-5 h-full w-[90%]"}>
-            {Array.from({length: 10}).map((_, index) =>  <Cloud key={index} scale={Math.random()*10/2} opacity={Math.random()} margin={index%2 === 0 ? index * 10 : index * 10 + 50+index} />)}
-        </div>
+          <div className={"absolute h-[80%] w-full z-0"}>
+            {Array.from({ length: 10 }).map((_, i) => (<Cloud key={i} scale={i === 0 ? 5: Math.random() * 10/2} opacity={Math.random()} margin={i/2===0 ? i*10 : (i + Math.random())*10 } delay={i * 4} />
+            ))}
+
+          </div>
         </div>
 
         <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
