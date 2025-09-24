@@ -6,10 +6,11 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import Cloud from "@/components/ui/Cloud";
+
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
+      <div className="flex-1 w-full flex flex-col items-center">
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
             <div className="flex gap-5 items-center font-semibold">
@@ -21,9 +22,9 @@ export default function Home() {
             {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
           </div>
         </nav>
-        <div className="flex-1 flex flex-col gap-20 w-full p-5 relative">
+        <div className="flex-1 flex flex-col gap-15 w-full relative items-center justify-center bg-accent">
           <Hero/>
-          <div className={"absolute h-[80%] w-full z-0"}>
+          <div className={"absolute w-full z-0 h-[85%] top-32"}>
             {Array.from({ length: 10 }).map((_, i) => (<Cloud key={i} scale={i === 0 ? 5: Math.random() * 10/2} opacity={Math.random()} margin={i/2===0 ? i*10 : (i + Math.random())*10 } delay={i * 4} />
             ))}
 
