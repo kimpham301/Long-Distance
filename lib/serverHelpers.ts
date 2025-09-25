@@ -1,6 +1,15 @@
 "use server";
 import {createClient} from "@/lib/supabase/server";
 import {revalidatePath} from "next/cache";
+import {headers} from "next/headers";
+import {userAgentFromString} from "next/server";
+
+export async function isMobileView(){
+    const headersList = await headers();
+    const userAgent = headersList.get("user-agent");
+    const { device } = userAgentFromString(userAgent || '');
+    return device.type === 'mobile';
+}
 
 export async function  insertJournal(entry: {journal_id: string, content: string}){
     const supabase = await createClient();

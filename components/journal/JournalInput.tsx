@@ -1,8 +1,9 @@
 "use client"
 import React from 'react';
-import {insertJournal} from "@/lib/apiHelpers";
+import {insertJournal} from "@/lib/serverHelpers";
 import {Button} from "@/components/ui/button";
-import {ChevronRight, LoaderCircle} from "lucide-react";
+import {ChevronRight} from "lucide-react";
+import Loading from "@/components/ui/Loading";
 
 const JournalInput = ({journalId}:{journalId: string}) => {
     const [input, setInput] = React.useState<string>("");
@@ -16,7 +17,7 @@ const JournalInput = ({journalId}:{journalId: string}) => {
 
     return (
         <div className={"bg-secondary w-full flex gap-3 relative"}>
-            {loading && <span className={"absolute top-11 right-[50%] animate-spin"}><LoaderCircle /></span>}
+            {loading && <Loading className={"top-11"}/>}
             <textarea value={input}
                       disabled={loading}
                       onChange={(e) => setInput(e.target.value)}
