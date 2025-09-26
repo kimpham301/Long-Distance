@@ -4,7 +4,7 @@ import {redirect} from "next/navigation";
 import {Card, CardHeader} from "@/components/ui/card";
 import InviteSuccessCard from "@/components/InviteSuccessCard";
 
-const InvitePage = async ({params}: {params:{inviteId: string}}) => {
+export default async function InvitePage ({params}: {params: Promise<{inviteId: string}>}) {
     const supabase = await createClient()
     const {data: authData} = await supabase.auth.getUser();
     const user = authData?.user
@@ -44,5 +44,3 @@ const InvitePage = async ({params}: {params:{inviteId: string}}) => {
     }
 
 };
-
-export default InvitePage;

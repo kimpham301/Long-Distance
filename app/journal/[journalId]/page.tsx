@@ -6,7 +6,7 @@ import JournalInfo from "@/components/journal/JournalInfo";
 import {Fragment} from "react";
 import {isMobileView} from "@/lib/serverHelpers";
 
-export default async function JournalPage({params}: {params: {journalId: string}}) {
+export default async function JournalPage({params}: {params: Promise<{journalId: string}>}) {
     const supabase = await createClient();
     const {journalId} =  await params
     const { data, error } = await supabase.auth.getClaims();
