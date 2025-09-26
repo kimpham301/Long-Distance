@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {CheckIcon} from "lucide-react";
 import {createClient} from "@/lib/supabase/client";
 
-const JournalLinkShare = ({journalId, userId} : {journalId: string, userId: string}) => {
+const JournalLinkShare = ({journal, userId} : {journal: { journalId: string, title: string }, userId: string}) => {
     const supabase= createClient()
 
     const [copySuccess, setCopySuccess] = useState(false);
@@ -27,7 +27,7 @@ const JournalLinkShare = ({journalId, userId} : {journalId: string, userId: stri
                 setLoading(false);
             }
             else {
-                supabase.from("invites").insert({journal: journalId, user_invite: userId}).select("invite_code").single()
+                supabase.from("invites").insert({journal: journal.journalId, user_invite: userId, title: journal.title}).select("invite_code").single()
                     .then((d) => {if(d.data && !d.error) {
                         setInviteCode(d.data?.invite_code ?baseUrl+d.data?.invite_code : "")
                     }
@@ -40,7 +40,7 @@ const JournalLinkShare = ({journalId, userId} : {journalId: string, userId: stri
             }
         })
 
-    }, [supabase, journalId, userId, baseUrl]);
+    }, [supabase, journal, userId, baseUrl]);
 
     const copyClipboard = () => {
         navigator.clipboard.writeText(inviteCode).then(() => setCopySuccess(true));

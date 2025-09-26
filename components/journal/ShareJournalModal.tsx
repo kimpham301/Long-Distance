@@ -7,7 +7,7 @@ import { XIcon} from "lucide-react";
 import JournalLinkShare from "@/components/journal/JournalLinkShare";
 
 const SHARE_JOURNAL_MODAL_ID = "share-journal-modal";
-const ShareJournalModal = ({journalId, userId, closeModal} : {journalId: string, userId: string, closeModal: () => void}) => {
+const ShareJournalModal = ({journal, userId, closeModal} : {journal: {journalId: string, title: string}, userId: string, closeModal: () => void}) => {
     return (
         <Modal id={SHARE_JOURNAL_MODAL_ID}>
             <Card>
@@ -27,7 +27,7 @@ const ShareJournalModal = ({journalId, userId, closeModal} : {journalId: string,
                     </Button>
                 </CardHeader>
                 <CardContent>
-                       <JournalLinkShare journalId={journalId} userId={userId} />
+                       <JournalLinkShare journal={journal} userId={userId} />
                 </CardContent>
             </Card>
         </Modal>

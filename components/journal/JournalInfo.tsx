@@ -45,7 +45,7 @@ const JournalInfo = ({journal, isMobile}: {
                 </div>
             </div>
             <hr className={"border-border h-full"} style={{borderWidth: "0.5px"}}/>
-            {shareModal && <ShareJournalModal journalId={journal?.generated_id} userId={journal?.created_user} closeModal={closeShareModal}/>}
+            {shareModal && <ShareJournalModal journal={{journalId: journal.generated_id, title: journal.title ?? ""}} userId={journal?.created_user} closeModal={closeShareModal}/>}
         </>
     );
 };
