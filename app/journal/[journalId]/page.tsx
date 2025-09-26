@@ -23,7 +23,6 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
     }
     const isMobile = await isMobileView();
     const colorMap = new Map();
-
     return (
         <div className="flex-1 w-full flex gap-8 h-full">
             <JournalInfo journal={journal}  isMobile={isMobile} />
@@ -32,14 +31,12 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
                 <div className={"flex flex-col h-full overflow-auto p-3"}>
                     {journal?.entries?.map((entry, index) => {
                         const entryDate = new Date(entry?.created_at)
-                        let colorIndex = 0
                         if(!colorMap.has(entry?.profiles.email)){
-                            colorMap.set(entry?.profiles.email, USER_COLOR[colorIndex])
-                            colorIndex++
+                            colorMap.set(entry?.profiles.email, USER_COLOR[index%2])
                         }
                         return (<Fragment key={entry?.id}>
                             <JournalEntry userName={entry?.profiles?.username ?? entry?.profiles.email?.split("@")[0] ?? "N/A"}
-                                          userColor={colorMap.get(entry?.profiles?.username) ?? USER_COLOR[0]}
+                                          userColor={colorMap.get(entry?.profiles?.email) ?? USER_COLOR[0]}
                                           entryDate={entryDate.toLocaleString()}
                                           content={entry?.content ?? ""}/>{index < journal?.entries?.length -1
                             && <hr  />}
