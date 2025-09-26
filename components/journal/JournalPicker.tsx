@@ -64,6 +64,7 @@ const JournalPicker = ({currentUser}: { currentUser: string | undefined }) => {
             if (journalReturn) {
             // @ts-expect-error idk why this is error
                 setJournals([...journals, journalReturn]);
+                (document.getElementById(CREATE_JOURNAL_MODAL_ID)as HTMLDialogElement).close()
                 handleSnackbarAction( "New journal created", "success")
             }
             else{
