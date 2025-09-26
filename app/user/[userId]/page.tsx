@@ -1,9 +1,10 @@
 import React from 'react';
 import {createClient} from "@/lib/supabase/server";
 
-const UserProfilePage = async ({params}:{params: {userId: string}}) => {
+export default async function UserProfilePage  ({params}:{params: Promise<{userId: string}>}){
     const supabase = await createClient()
-    const {data: userProfiles, error} = await supabase.from("profiles").select("username, email").eq('id', params?.userId).single()
+    const {userId} = await params;
+    const {data: userProfiles, error} = await supabase.from("profiles").select("username, email").eq('id', userId).single()
     if(error){
         console.error('Cannot find user user')
         return null
@@ -14,5 +15,3 @@ const UserProfilePage = async ({params}:{params: {userId: string}}) => {
         </main>
     );
 };
-
-export default UserProfilePage;
