@@ -1,20 +1,17 @@
 import React from 'react';
 import {ThemeSwitcher} from "@/components/theme-switcher";
-import {hasEnvVars} from "@/lib/utils";
-import {EnvVarWarning} from "@/components/env-var-warning";
 import {AuthButton} from "@/components/AuthButton";
 import {isMobileView} from "@/lib/serverHelpers";
 import MobileUserMenuButton from "@/components/MobileUserMenuButton";
 import {BookHeart} from "lucide-react";
-import JournalPicker from "@/components/JournalPicker";
+import JournalPicker from "@/components/journal/JournalPicker";
 import {createClient} from "@/lib/supabase/server";
 import Link from "next/link";
 
-const Header = async () => {
+const Header = async ({hideAuthBtn}: {hideAuthBtn?: boolean}) => {
     const isMobile = await isMobileView();
     const supabase = await createClient();
 
-    // You can also use getUser() which will be slower.
     const { data } = await supabase.auth.getUser();
 
     const user = data?.user;
@@ -29,7 +26,7 @@ const Header = async () => {
                     Long Distance
                 </Link>
                 <div className={"flex gap-3 items-center"}>
-                    {!hasEnvVars ? <EnvVarWarning/> : <MobileUserMenuButton/>}
+                    {!hideAuthBtn && <MobileUserMenuButton/>}
                 </div>
             </div>)
         }
@@ -43,7 +40,7 @@ const Header = async () => {
                 </div>
                 <div className={"flex gap-3 items-center"}>
                     <ThemeSwitcher/>
-                    {!hasEnvVars ? <EnvVarWarning/> : <AuthButton user={user}/>}
+                    {!hideAuthBtn && <AuthButton user={user}/>}
                 </div>
             </div>)
         }

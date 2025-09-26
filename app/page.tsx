@@ -2,6 +2,7 @@ import { Hero } from "@/components/Hero";
 import Cloud from "@/components/ui/Cloud";
 import {redirect} from "next/navigation";
 import {createClient} from "@/lib/supabase/server";
+import Header from "@/components/ui/Header";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -10,6 +11,8 @@ export default async function Home() {
     redirect("/journal");
   }
   return (
+      <>
+        <Header/>
     <main className="h-[calc(100vh_-_80px)] flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col items-center">
         <div className="flex-1 flex flex-col gap-15 w-full relative items-center justify-center bg-accent">
@@ -27,6 +30,6 @@ export default async function Home() {
           </p>
         </footer>
       </div>
-    </main>
+    </main></>
   );
 }

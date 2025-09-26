@@ -33,13 +33,34 @@ export function LoginForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: loginData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/journal");
+      const inviteCode = sessionStorage.getItem("invite_code");
+      console.log(inviteCode, loginData?.user?.id)
+      if (inviteCode) {
+        const {data: journal} = await supabase.from("invites")
+            .update({user_receive_invite: loginData.user?.id, is_used: true })
+            .eq("invite_code", inviteCode)
+            .neq("user_invite", loginData?.user?.id)
+            .select("journal")
+            .limit(1)
+            .single()
+        sessionStorage.removeItem("invite_code");
+        if (journal?.journal){
+          router.push(`/journal/${journal.journal}`);
+        }
+        else{
+          router.push("/journal")
+        }
+      }
+      else {
+        router.push("/journal");
+      }
+
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

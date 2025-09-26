@@ -14,6 +14,15 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         white: "var(--white)",
+        backdrop : "rgba(0,0,0,0.4)",
+        success:{
+          DEFAULT: "var(--success)",
+          foreground: "var(--success-foreground)",
+        },
+        error:{
+          DEFAULT: "var(--error)",
+          foreground: "var(--error-foreground)",
+        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -58,6 +67,19 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      animation:{
+        'slide-down': 'slidedown 1s ease'
+      },
+      keyframes:{
+        slidedown:{
+          '0%':{
+            transform: "translateY(-50%)",
+            opacity: "0",
+            },
+            '100%':{ transform: "translateY(0%)",
+                      opacity: "1",}
+        }
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

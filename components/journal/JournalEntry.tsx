@@ -3,7 +3,7 @@ import React from 'react';
 
 const JournalEntry = ({userName, entryDate, content}:{userName: string, entryDate: string, content: string}) => {
     return (
-        <div className={"px-3 py-5 pb-3 border-b-accent-foreground mb-3 w-full relative"}>
+        <div className={"px-3 py-5 pb-3 border-b-accent-foreground mb-3 w-full relative animate-slide-down"}>
             <span className={'bg-primary px-1 mr-2 rounded text-primary-foreground absolute top-3'}>
                 {userName}
             </span>
