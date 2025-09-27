@@ -9,7 +9,7 @@ import {useUserContext} from "@/components/UserContextWrapper";
 import {useParams} from "next/navigation";
 
 const UserDisplayNameEditor = () => {
-    const {profile, changeUsername} = useUserContext()
+    const {profile, changeUsername, authId} = useUserContext()
     const {userId} = useParams();
     const supabase = createClient()
     const [isEditing, setIsEditing] = React.useState(false);
@@ -17,12 +17,17 @@ const UserDisplayNameEditor = () => {
     const [loading, setLoading] = React.useState(false);
     const [inputValue, setInputValue] = React.useState(profile?.username ?? "");
 
+    if(authId !== userId) {
+        return <p
+            className={`${!profile?.username ? "text-muted-foreground italic" : ""}`}>{profile?.username || "N/A"}</p>
+
+    }
     const handleEdit = () => {
         setIsEditing(true);
     }
 
     const cancel = () => {
-        if(!loading){
+        if (!loading) {
             setIsEditing(false);
             setInputValue(profile?.username ?? "")
         }
@@ -62,7 +67,7 @@ const UserDisplayNameEditor = () => {
                 ? (<Input
                     value={inputValue}
                     onBlur={cancel}
-                    className={"border-muted-foreground"}
+                    className={"border-muted-foreground h-full"}
                     autoFocus={true}
                     onChange={handleInputChange}
                     name={"display-name"}

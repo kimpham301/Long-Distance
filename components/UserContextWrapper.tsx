@@ -1,6 +1,6 @@
 "use client"
 
-import React, {createContext, use, useCallback, useMemo} from "react";
+import React, {createContext, use, useMemo} from "react";
 import {createClient} from "@/lib/supabase/client";
 
 interface UserProfile {
@@ -14,7 +14,8 @@ interface UserProfileActions{
     changeAvatar: (url: string) => void;
     changeUsername: (name: string) => void;
     getId: () => string | undefined;
-    profile: UserProfile | undefined;}
+    profile: UserProfile | undefined;
+    authId: string;}
 const UserContext = createContext<UserProfileActions  | undefined>(undefined);
 
 const useUserContext = () => {
@@ -72,8 +73,9 @@ const UserContextWrapper = ({children, userId, existingProfile}: {children: Reac
         ({changeAvatar,
             changeUsername,
             getId,
-            profile}),
-        [profile])
+            profile,
+        authId: userId}),
+        [profile, userId])
     return <UserContext.Provider value={value}>
         {children}
     </UserContext.Provider>

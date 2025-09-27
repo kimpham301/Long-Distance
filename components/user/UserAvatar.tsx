@@ -7,7 +7,7 @@ import Image from "next/image";
 import {useUserContext} from "@/components/UserContextWrapper";
 
 const UserAvatar = () => {
-    const {profile} = useUserContext()
+    const {profile, authId} = useUserContext()
     const [openAvatar, setOpenAvatar] = React.useState(false);
 
     useEffect(() => {
@@ -33,11 +33,11 @@ const UserAvatar = () => {
                       alt={getInitials(profile?.username)}/>
             )
             : <UserRoundIcon className={'m-auto w-12 h-12'}/>}
-            <Button className={"w-6 h-8 rounded-full absolute bottom-0 right-0"}
-                    onClick={() => {
+            {profile?.id === authId && <Button className={"w-6 h-8 rounded-full absolute bottom-0 right-0"}
+                                               onClick={() => {
                         setOpenAvatar(true)}}>
                     <Upload/>
-                </Button>
+                </Button>}
             </span>
             {openAvatar && <UploadAvatarModal closeModal={closeModal}/>}
         </>
