@@ -5,39 +5,42 @@ import {Edit2, SaveIcon} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {createClient} from "@/lib/supabase/client";
 import Loading from "@/components/ui/Loading";
+import {useUserContext} from "@/components/UserContextWrapper";
+import {useParams} from "next/navigation";
 
-const UserDisplayNameEditor = ({userProfiles, userId}: {
-    userProfiles: { username: string | null },
-    userId: string
-}) => {
+const UserDisplayNameEditor = () => {
+    const {profile, changeUsername} = useUserContext()
+    const {userId} = useParams();
     const supabase = createClient()
     const [isEditing, setIsEditing] = React.useState(false);
     const [error, setError] = React.useState("");
     const [loading, setLoading] = React.useState(false);
-    const [updatedUsername, setUpdatedUsername] = React.useState(userProfiles.username);
-    const [inputValue, setInputValue] = React.useState(updatedUsername ?? "");
+    const [inputValue, setInputValue] = React.useState(profile?.username ?? "");
 
     const handleEdit = () => {
         setIsEditing(true);
     }
 
     const cancel = () => {
-        setIsEditing(false);
-        setInputValue(updatedUsername ?? "")
+        if(!loading){
+            setIsEditing(false);
+            setInputValue(profile?.username ?? "")
+        }
     }
+
     const closeEdit = async () => {
-        if(inputValue === updatedUsername){
+        if(inputValue === profile?.username) {
             setIsEditing(false);
         }
         else {
             setLoading(true)
-            const updatedValue = await supabase.from("profiles").update({username: inputValue}).eq("id", userId).select("username").single()
+            const updatedValue = await supabase.from("profiles").update({username: inputValue}).eq("id", userId as string ?? "").select("username").single()
             if (updatedValue.error) {
                 console.error(updatedValue.error)
                 setError("Something went wrong")
                 setLoading(false)
             } else if (updatedValue.data.username) {
-                setUpdatedUsername(updatedValue.data.username)
+                changeUsername(updatedValue.data.username)
                 setLoading(false)
                 setIsEditing(false);
             }
@@ -65,13 +68,16 @@ const UserDisplayNameEditor = ({userProfiles, userId}: {
                     name={"display-name"}
                 />)
                 :
-                <p className={`${!updatedUsername ? "text-muted-foreground italic" : ""}`}>{updatedUsername || "N/A"}</p>
+                <p className={`${!profile?.username ? "text-muted-foreground italic" : ""}`}>{profile?.username || "N/A"}</p>
             }
             {error && <span className={"absolute top-9 text-error-foreground text-xs"}>{error}</span>}
             {loading && <Loading className={"top-2"}/>}
             {isEditing
-                ? <Button variant={"ghost"}
-                          onClick={closeEdit}>
+                ? <Button
+                    id={"save-btn"}
+                    variant={"ghost"}
+                    onMouseDown={closeEdit}
+                >
                     <SaveIcon/>
                 </Button>
                 : <Button variant={"ghost"} onClick={handleEdit}><Edit2/></Button>}
