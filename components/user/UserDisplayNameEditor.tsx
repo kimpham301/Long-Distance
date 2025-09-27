@@ -12,26 +12,37 @@ const UserDisplayNameEditor = ({userProfiles, userId}: {
 }) => {
     const supabase = createClient()
     const [isEditing, setIsEditing] = React.useState(false);
-    const [inputValue, setInputValue] = React.useState("");
     const [error, setError] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [updatedUsername, setUpdatedUsername] = React.useState(userProfiles.username);
+    const [inputValue, setInputValue] = React.useState(updatedUsername ?? "");
 
     const handleEdit = () => {
         setIsEditing(true);
     }
+
+    const cancel = () => {
+        setIsEditing(false);
+        setInputValue(updatedUsername ?? "")
+    }
     const closeEdit = async () => {
-        setLoading(true)
-        const updatedValue = await supabase.from("profiles").update({username: inputValue}).eq("id", userId).select("username").single()
-        if (updatedValue.error) {
-            console.error(updatedValue.error)
-            setError("Something went wrong")
-            setLoading(false)
-        } else if (updatedValue.data.username) {
-            setUpdatedUsername(updatedValue.data.username)
-            setLoading(false)
+        if(inputValue === updatedUsername){
             setIsEditing(false);
         }
+        else {
+            setLoading(true)
+            const updatedValue = await supabase.from("profiles").update({username: inputValue}).eq("id", userId).select("username").single()
+            if (updatedValue.error) {
+                console.error(updatedValue.error)
+                setError("Something went wrong")
+                setLoading(false)
+            } else if (updatedValue.data.username) {
+                setUpdatedUsername(updatedValue.data.username)
+                setLoading(false)
+                setIsEditing(false);
+            }
+        }
+
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,10 +54,11 @@ const UserDisplayNameEditor = ({userProfiles, userId}: {
         }
     }
     return (
-        <div className={"flex items-center relative"}>
+        <div className={"flex items-center relative mr-[-16px]"}>
             {isEditing
                 ? (<Input
                     value={inputValue}
+                    onBlur={cancel}
                     className={"border-muted-foreground"}
                     autoFocus={true}
                     onChange={handleInputChange}
