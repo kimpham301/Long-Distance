@@ -15,7 +15,7 @@ export default async function InvitePage ({params}: {params: Promise<{inviteId: 
         redirect("/auth/error")
     }
 
-    if(validateInvite.is_used){
+    if(validateInvite.is_used || !validateInvite){
         return (
             <Card>
                 <CardHeader>

@@ -40,7 +40,6 @@ export function LoginForm({
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
       const inviteCode = sessionStorage.getItem("invite_code");
-      console.log(inviteCode, loginData?.user?.id)
       if (inviteCode) {
         const {data: journal} = await supabase.from("invites")
             .update({user_receive_invite: loginData.user?.id, is_used: true })
