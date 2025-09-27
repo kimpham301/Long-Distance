@@ -3,7 +3,6 @@ import React from 'react';
 import "./cloud.css"
 
 const Cloud = ({scale, opacity, margin, delay}: { scale: number, opacity: number, margin: number, delay: number }) => {
-    console.log(delay)
     return (
         <div className="cloud"
              style={{

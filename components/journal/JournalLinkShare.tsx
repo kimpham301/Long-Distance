@@ -19,7 +19,7 @@ const JournalLinkShare = ({journal, userId} : {journal: { journalId: string, tit
     useEffect(() => {
         supabase.from("invites").select("invite_code, is_used").eq("is_used", false).then((d) => {
             if(d.error){
-                console.log(d.error);
+                console.error(d.error);
                 setLoading(false);
             }
             else if (d.data.length > 0){
