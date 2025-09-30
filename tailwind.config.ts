@@ -62,6 +62,9 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
       },
+      backgroundImage:{
+        striped: "repeating-linear-gradient(to right,var(--primary) 0px,var(--primary) 10px,var(--background) 10px,var(--background) 20px)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

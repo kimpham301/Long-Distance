@@ -31,3 +31,36 @@ export async function  insertJournal(entry: {journal_id: string, content: string
         return data
     }
 }
+
+export async function updateJournal(journal_id: string, request: {title: string, long_distance_date: string}){
+    const supabase = await createClient();
+    const {data, error} = await supabase
+        .from("journal")
+        .update({...request, last_update: new Date().toLocaleString()})
+        .eq("generated_id", journal_id)
+        .select("title, long_distance_date, last_update")
+    if(error){
+        console.error("Error updating journal", error)
+        return null
+    }
+    else{
+        revalidatePath(`/journal/${journal_id}`);
+        return data
+    }
+}
+
+export async function deleteJournal(journal_id: string){
+    const supabase = await createClient();
+    const {error} = await supabase
+        .from("journal")
+        .delete()
+        .eq("generated_id", journal_id)
+    if(error){
+        console.error("Error deleting journal", error)
+        return null
+    }
+    else{
+        revalidatePath(`/journal/${journal_id}`);
+        return "deleted"
+    }
+}

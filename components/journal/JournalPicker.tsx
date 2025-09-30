@@ -11,7 +11,7 @@ import {createClient} from "@/lib/supabase/client";
 import {useParams, useRouter} from "next/navigation";
 import {ChevronDown, PlusIcon} from "lucide-react";
 import Loading from "@/components/ui/Loading";
-import {CreateJournalModal, CREATE_JOURNAL_MODAL_ID} from "@/components/journal/CreateJournalModal";
+import {CreateJournalModal, CREATE_JOURNAL_MODAL_ID} from "@/components/journal/modal/CreateJournalModal";
 import {Snackbar} from "@/components/ui/Snackbar";
 
 const JournalPicker = ({currentUser}: { currentUser: string | undefined }) => {
