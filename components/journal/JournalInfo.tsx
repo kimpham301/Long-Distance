@@ -4,7 +4,6 @@ import {Button} from "@/components/ui/button";
 import {SettingsIcon, ShareIcon, UserRoundIcon} from "lucide-react";
 import {SHARE_JOURNAL_MODAL_ID, ShareJournalModal} from "@/components/journal/modal/ShareJournalModal";
 import Image from "next/image";
-import {clsx} from "clsx";
 import Link from "next/link";
 import {SETTINGS_JOURNAL_MODAL_ID, SettingsModal} from "@/components/journal/modal/SettingsModals";
 
@@ -65,9 +64,9 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
                                 <Fragment key={user.id}>
                                     <Link href={"/user/" + user.id}>
                                 <span
-                                      className={clsx("rounded-full w-20 h-20 flex shrink-0", `bg-${user.color}`)}>
+                                      className={`rounded-full w-20 h-20 flex shrink-0 ${user.color} p-1`}>
                                 {user.avatar_url
-                                    ? (<Image className={clsx("aspect-square h-full w-full rounded-full border-4",`border-${user.color}`)}
+                                    ? (<Image className={`aspect-square h-full w-full rounded-full`}
                                               src={user.avatar_url}
                                               width={100}
                                               height={100}

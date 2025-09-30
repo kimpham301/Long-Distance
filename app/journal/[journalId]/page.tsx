@@ -6,7 +6,7 @@ import JournalInfo from "@/components/journal/JournalInfo";
 import {Fragment} from "react";
 import {isMobileView} from "@/lib/serverHelpers";
 
-const USER_COLOR = ['primary','orange-600','emerald-700',  ]
+const USER_COLOR = ['bg-primary','bg-orange-400','bg-emerald-700']
 export default async function JournalPage({params}: {params: Promise<{journalId: string}>}) {
     const supabase = await createClient();
     const {journalId} =  await params
