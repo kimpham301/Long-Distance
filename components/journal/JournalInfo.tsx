@@ -1,46 +1,64 @@
 "use client"
 import React, {Fragment, useEffect, useState} from 'react';
 import {Button} from "@/components/ui/button";
-import {ShareIcon, UserRoundIcon} from "lucide-react";
-import {SHARE_JOURNAL_MODAL_ID, ShareJournalModal} from "@/components/journal/ShareJournalModal";
+import {SettingsIcon, ShareIcon, UserRoundIcon} from "lucide-react";
+import {SHARE_JOURNAL_MODAL_ID, ShareJournalModal} from "@/components/journal/modal/ShareJournalModal";
 import Image from "next/image";
 import {clsx} from "clsx";
 import Link from "next/link";
+import {SETTINGS_JOURNAL_MODAL_ID, SettingsModal} from "@/components/journal/modal/SettingsModals";
 
-const JournalInfo = ({journal, isMobile, userMap}: {
-    journal: { generated_id: string, last_update: string | null, title: string | null, created_user: string },
+const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
+    journal: { generated_id: string, last_update: string | null, title: string | null, created_user: string, long_distance_date: string | null },
     isMobile: boolean,
     userMap: Map<string, {id: string,name: string, color: string, avatar_url: string}>
+    isUserCreator: boolean
 }) => {
     const [shareModal, setShareModal] = useState(false);
+    const [settingsModal, setSettingsModal] = useState(false);
 
     useEffect(() => {
         if(shareModal){
             (document.getElementById(SHARE_JOURNAL_MODAL_ID) as HTMLDialogElement).showModal()
         }
-    }, [shareModal]);
+        if(settingsModal){
+            (document.getElementById(SETTINGS_JOURNAL_MODAL_ID) as HTMLDialogElement).showModal()
+        }
+    }, [shareModal, settingsModal]);
 
     const formattedDate = journal?.last_update ? new Date(journal?.last_update) : undefined
 
     const closeShareModal = () => {
         setShareModal(false);
     }
+    const closeSettingsModal = () => {
+        setSettingsModal(false);
+    }
     const userArr = Array.from(userMap.values())
+    const distanceDate = journal?.long_distance_date ? new Date(journal.long_distance_date) : null;
+
+    const getDateDiff = () => {
+        const _MS_PER_DAY = 1000*60*60*24
+        if(!distanceDate)
+            return null;
+        const now = new Date();
+        // @ts-expect-error works
+        const diff = Math.floor((now - distanceDate)/_MS_PER_DAY);
+        return diff === 0 ? null : diff;
+    }
     if (isMobile) return null
     return (
         <>
-            <div className="flex flex-col gap-2 h-full p-3 pr-0">
+            <div className="flex flex-col gap-2 h-full p-3 pr-0 md:min-w-[222px]">
                 <div>
                     <h6 className={"font-semibold"}>{journal?.title}</h6>
-                    <span className={"text-sm text-accent-foreground"}>{formattedDate?.toLocaleString("en-US", {
+                    <span className={"text-sm text-accent-foreground"}>Profile updated: {formattedDate?.toLocaleString("en-US", {
                         year: 'numeric',
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit"
+                        month: "numeric",
+                        day: "numeric"
                     })}</span>
                 </div>
-                <div className={"flex-grow"}>
+                <div className={"flex-grow flex flex-col gap-3"}>
                     <div className={"flex items-center"}>
                         {userArr.map((user, index) => {
                             return (
@@ -64,6 +82,12 @@ const JournalInfo = ({journal, isMobile, userMap}: {
                                         className="h-0.5 w-full bg-striped"></div>)}</Fragment>)
                         })}
                     </div>
+                    {distanceDate && <div className={"rounded-2xl text flex flex-col items-center"}>
+                        <span className={"text-[14px]"}>Distanced since</span>
+                        <span className={"text-primary font-semibold"}>
+                            {distanceDate.toLocaleDateString()} <span className={"text-xs text-muted-foreground"}>({getDateDiff() + " days)"}</span>
+                        </span>
+                    </div>}
                 </div>
                 <div className={"p-2 flex gap-2 flex-row-reverse"}>
                     <Button variant={"secondary"} onClick={() => {
@@ -71,11 +95,15 @@ const JournalInfo = ({journal, isMobile, userMap}: {
                     }}>
                         <ShareIcon/>
                     </Button>
+                    <Button variant={"secondary"} onClick={() => {setSettingsModal(true)}}>
+                        <SettingsIcon />
+                    </Button>
                 </div>
             </div>
             <hr className={"border-border h-full"} style={{borderWidth: "0.5px"}}/>
             {shareModal && <ShareJournalModal journal={{journalId: journal.generated_id, title: journal.title ?? ""}}
                                               userId={journal?.created_user} closeModal={closeShareModal}/>}
+            {settingsModal && <SettingsModal journal={journal} closeModal={closeSettingsModal} isUserCreator={isUserCreator} />}
         </>
     );
 };

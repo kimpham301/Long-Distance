@@ -77,6 +77,7 @@ export type Database = {
           generated_id: string
           id: number
           last_update: string | null
+          long_distance_date: string | null
           title: string | null
         }
         Insert: {
@@ -86,6 +87,7 @@ export type Database = {
           generated_id?: string
           id?: number
           last_update?: string | null
+          long_distance_date?: string | null
           title?: string | null
         }
         Update: {
@@ -95,6 +97,7 @@ export type Database = {
           generated_id?: string
           id?: number
           last_update?: string | null
+          long_distance_date?: string | null
           title?: string | null
         }
         Relationships: [
@@ -203,6 +206,7 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: string
+          updated_at: string
           username: string | null
         }
         Insert: {
@@ -210,6 +214,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id: string
+          updated_at?: string
           username?: string | null
         }
         Update: {
@@ -217,6 +222,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          updated_at?: string
           username?: string | null
         }
         Relationships: []

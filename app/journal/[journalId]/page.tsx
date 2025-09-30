@@ -6,7 +6,7 @@ import JournalInfo from "@/components/journal/JournalInfo";
 import {Fragment} from "react";
 import {isMobileView} from "@/lib/serverHelpers";
 
-const USER_COLOR = ['primary','[#9065b0]', '[#d9730d]' ]
+const USER_COLOR = ['primary','orange-600','emerald-700',  ]
 export default async function JournalPage({params}: {params: Promise<{journalId: string}>}) {
     const supabase = await createClient();
     const {journalId} =  await params
@@ -15,7 +15,7 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
         redirect("/auth/login");
     }
     const {data: journal, error: journalError} = await supabase.from("journal")
-        .select(`generated_id, last_update, created_user, title, entries:journal_history(*, profiles(id,username, email, avatar_url))`)
+        .select(`generated_id, last_update, created_user, title, long_distance_date, entries:journal_history(*, profiles(id,username, email, avatar_url))`)
         .eq("generated_id", journalId)
         .order('created_at', { ascending: false, referencedTable: "entries"}).single();
     if (journalError) {
@@ -23,9 +23,10 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
     }
     const isMobile = await isMobileView();
     const userMap = new Map();
+    const isUserCreator = journal.created_user === data.claims.sub
     return (
         <div className="flex-1 w-full flex gap-8 h-full">
-            <JournalInfo journal={journal}  isMobile={isMobile} userMap={userMap}/>
+            <JournalInfo journal={journal}  isMobile={isMobile} userMap={userMap} isUserCreator={isUserCreator}/>
             <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
                 <JournalInput journalId={journal?.generated_id}/>
                 <div className={"flex flex-col h-full overflow-auto p-3"}>
