@@ -7,10 +7,12 @@ import { XIcon} from "lucide-react";
 import {deleteJournal, updateJournal} from "@/lib/serverHelpers";
 import {Input} from "@/components/ui/input";
 import Loading from "@/components/ui/Loading";
+import {useRouter} from "next/navigation";
 
 const SETTINGS_JOURNAL_MODAL_ID = "settings-journal-modal";
 const SettingsModal = ({journal, closeModal,isUserCreator} :
                        {journal: {generated_id: string, title: string | null, long_distance_date: string | null}, closeModal: () => void, isUserCreator:boolean}) => {
+    const router = useRouter();
     const [form, setForm] =React.useState({
         title: journal.title ?? "",
         long_distance_date: journal.long_distance_date ?? ""
@@ -45,8 +47,7 @@ const SettingsModal = ({journal, closeModal,isUserCreator} :
             setLoading(false);
         }
         else {
-            (document.getElementById(SETTINGS_JOURNAL_MODAL_ID)as HTMLDialogElement).close();
-            closeModal()
+            router.push("/journal");
         }
     }
     return (

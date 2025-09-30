@@ -40,8 +40,8 @@
     --foreground: rgba(233, 243, 255, 0.87);
     --success: rgba(3, 81, 38, 0.71);
     --success-foreground: rgb(46, 181, 107);
-    --error:rgb(66, 0, 0, 0.8);
-    --error-foreground: rgba(241, 160, 160, 0.89);
+    --error: rgba(255, 60, 60, 0.8);
+    --error-foreground: rgba(87, 14, 14, 0.89);
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 8.8%;

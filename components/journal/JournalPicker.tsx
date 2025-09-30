@@ -36,7 +36,8 @@ const JournalPicker = ({currentUser}: { currentUser: string | undefined }) => {
             {
                 title: newJournal.title,
                 default: false,
-                generated_id: newJournal.generated_id, status: "pending"
+                generated_id: newJournal.generated_id,
+                status: "pending"
             }]);
 
     useEffect(() => {
@@ -58,11 +59,12 @@ const JournalPicker = ({currentUser}: { currentUser: string | undefined }) => {
         const generated_id = `${newTitle.split(' ').map(c => c.at(0)).join("")}-${Date.now()}-${currentUser?.split('-')[0]}`
         if (newTitle.trim()) {
             addOptimisticJournals({title: newTitle, generated_id: generated_id});
-            const journalReturn = await supabase.from("journal")
+            const {data: journalReturn, error} = await supabase.from("journal")
                 .insert({title: newTitle, generated_id: generated_id, created_user: currentUser})
-                .select("title, created_at, default, generated_id")
-            if (journalReturn) {
-            // @ts-expect-error idk why this is error
+                .select("title, default, generated_id")
+                .limit(1)
+                .single()
+            if (journalReturn || !error) {
                 setJournals([...journals, journalReturn]);
                 (document.getElementById(CREATE_JOURNAL_MODAL_ID)as HTMLDialogElement).close()
                 handleSnackbarAction( "New journal created", "success")
