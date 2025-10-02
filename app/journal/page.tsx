@@ -14,19 +14,17 @@ export default async function JournalListPage() {
   if(defaultJournal){
       redirect(`/journal/${defaultJournal.journal?.generated_id}`);
   }
-  if(journal?.length === 0){
-    return (<>
-      <div>No Journal :(</div>
-    </>)
-  }
   else {
       return (
-          <div className={"flex justify-center items-center h-full"}>
+          <div className={"flex flex-col mt-4 mx-3 gap-4"}>
+            <h2 className={"font-bold text-xl"}>Journals</h2>
+          <div className={"flex h-full gap-4"}>
         {journal?.map((journal) => {
           return (
               <JournalCard key={journal?.journal?.generated_id} journal={journal.journal}/>)
         })}
-
-      </div>);
+            <JournalCard key={"new-journal-card"}/>
+      </div>
+          </div>);
   }
 }
