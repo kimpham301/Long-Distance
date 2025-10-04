@@ -78,7 +78,7 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
                             <div className="h-0.5 w-full bg-striped"></div>
                             <Button
                                 onClick={() => setShareModal(true)}
-                            className={`rounded-full w-20 h-20 flex justify-center items-center text-2xl font-bold shrink-0 bg-muted p-1`}>
+                            className={`rounded-full w-20 h-20 flex justify-center items-center text-2xl font-bold shrink-0 bg-muted text-muted-foreground p-1`}>
                                 ?
                             </Button>
                             </>

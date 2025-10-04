@@ -1,30 +1,26 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import JournalCard from "@/components/journal/JournalCard";
+import JournalList from "@/components/journal/JournalList";
 
-export default async function JournalListPage() {
+export default async function JournalListPage({searchParams} :{searchParams: {view_all: boolean}}) {
   const supabase = await createClient();
 
+  const {view_all} = searchParams;
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims) {
     redirect("/auth/login");
   }
   const {data: journal} = await supabase.from("user_journal_access").select(`is_default, journal(generated_id, title)`);
   const defaultJournal = journal?.find(journal => journal.is_default === true)
-  if(defaultJournal){
+  if(defaultJournal && !view_all){
       redirect(`/journal/${defaultJournal.journal?.generated_id}`);
   }
   else {
+      const formatJournal = journal?.map(({journal}) => ({generated_id: journal.generated_id, title: journal.title}))
       return (
-          <div className={"flex flex-col mt-4 mx-3 gap-4"}>
-            <h2 className={"font-bold text-xl"}>Journals</h2>
-          <div className={"flex h-full gap-4"}>
-        {journal?.map((journal) => {
-          return (
-              <JournalCard key={journal?.journal?.generated_id} journal={journal.journal}/>)
-        })}
-            <JournalCard key={"new-journal-card"}/>
-      </div>
+          <div className={"h-full mt-4 mx-3 gap-4"}>
+            <h2 className={"font-bold text-xl mb-6"}>Journals</h2>
+            <JournalList userId={data.claims.sub} journal={formatJournal} />
           </div>);
   }
 }
