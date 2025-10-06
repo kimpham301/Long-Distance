@@ -30,8 +30,9 @@ const JournalInput =
     }
 
     useEffect(() => {
-        const handleMouseDown = (e) => {
-            if((e.target.id !== 'entry-button' && e.target.id !== "entry-textarea") && closeEdit){
+        const handleMouseDown = (e: MouseEvent) => {
+            // @ts-expect-error id exists
+            if((e.target?.id !== 'entry-button' && e.target?.id !== "entry-textarea") && closeEdit){
                 closeEdit()
             }
         }
