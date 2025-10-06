@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import JournalList from "@/components/journal/JournalList";
 
-export default async function JournalListPage({searchParams} :{searchParams: {view_all: boolean}}) {
+export default async function JournalListPage({searchParams} :{searchParams: Promise<{view_all: boolean}>}) {
   const supabase = await createClient();
 
-  const {view_all} = searchParams;
+  const {view_all} =await searchParams;
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims) {
     redirect("/auth/login");
