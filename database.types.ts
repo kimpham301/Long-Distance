@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      entries_history: {
+        Row: {
+          content: string
+          created_at: string
+          entry_id: number
+          id: number
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          entry_id: number
+          id?: number
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          entry_id?: number
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entries_history_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_history"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entries_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invites: {
         Row: {
           created_at: string
@@ -115,21 +154,27 @@ export type Database = {
           content: string | null
           created_at: string
           id: number
+          is_deleted: boolean
           journal_id: string
+          updated_at: string
           user_id: string
         }
         Insert: {
           content?: string | null
           created_at?: string
           id?: number
+          is_deleted?: boolean
           journal_id: string
+          updated_at?: string
           user_id: string
         }
         Update: {
           content?: string | null
           created_at?: string
           id?: number
+          is_deleted?: boolean
           journal_id?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: [

@@ -64,3 +64,38 @@ export async function deleteJournal(journal_id: string){
         return "deleted"
     }
 }
+export async function getJournalEntry(journalId: string, start: number, limit: number) {
+    const supabase = await createClient();
+    const {data: entries, error : entriesError} = await supabase.from("journal_history")
+        .select('*, entries_history(content, created_at), profiles(id,username, email, avatar_url)')
+        .eq("journal_id", journalId)
+        .order('created_at', { ascending: false})
+        .range(start, start + limit - 1)
+    if(entriesError){
+        return []
+    }
+    else {
+        return entries
+    }
+}
+export async function updateJournalEntry(entry: {id: number | undefined, content: string}){
+    const supabase = await createClient();
+    const {data: user, error: userError} = await supabase.auth.getUser()
+    if(!user?.user || userError || !entry.id){
+        console.error("Can't find user")
+        return null;
+    }
+    else {
+        const {data, error} = await supabase
+            .from('journal_history')
+            .update({content: entry.content, user_id: user.user?.id, updated_at: new Date().toLocaleString()})
+            .eq("id", entry.id )
+            .select("content, created_at, profiles(username)")
+        if(error){
+            console.error("Error update entry:", error)
+            return null
+        }
+        revalidatePath("/journal");
+        return data
+    }
+}
