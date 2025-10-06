@@ -8,10 +8,11 @@ import {deleteJournal, updateJournal} from "@/lib/serverHelpers";
 import {Input} from "@/components/ui/input";
 import Loading from "@/components/ui/Loading";
 import {useRouter} from "next/navigation";
+import {Label} from "@/components/ui/label";
 
 const SETTINGS_JOURNAL_MODAL_ID = "settings-journal-modal";
 const SettingsModal = ({journal, closeModal,isUserCreator} :
-                       {journal: {generated_id: string, title: string | null, long_distance_date: string | null}, closeModal: () => void, isUserCreator:boolean}) => {
+                       {journal: {generated_id: string, title: string | null, last_update: string | null, long_distance_date: string | null}, closeModal: () => void, isUserCreator:boolean}) => {
     const router = useRouter();
     const [form, setForm] =React.useState({
         title: journal.title ?? "",
@@ -20,6 +21,8 @@ const SettingsModal = ({journal, closeModal,isUserCreator} :
     const [error, setError] = React.useState('');
     const [deleteMode, setDeleteMode] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
+
+    const formattedDate = journal?.last_update ? new Date(journal?.last_update) : undefined
 
     const inputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {value, name} = event.target;
@@ -60,7 +63,7 @@ const SettingsModal = ({journal, closeModal,isUserCreator} :
                     </CardDescription>
                     <Button variant={"ghost"}
                             onClick={() => {
-                                (document.getElementById(SETTINGS_JOURNAL_MODAL_ID)as HTMLDialogElement).close();
+                                (document.getElementById(SETTINGS_JOURNAL_MODAL_ID) as HTMLDialogElement).close();
                                 closeModal();
                             }}
                             className={"absolute right-4 top-2"}
@@ -70,8 +73,14 @@ const SettingsModal = ({journal, closeModal,isUserCreator} :
                 </CardHeader>
                 <CardContent className={"flex flex-col gap-3 relative pb-10"}>
                     {loading && <Loading className={"mt-5"} />}
-                    <Input disabled={deleteMode || loading} value={form.title} name={"title"} id={"title"} onChange={inputOnChange} />
-                    <Input disabled={deleteMode || loading} value={form.long_distance_date} type={"date"} name={"long_distance_date"} id={"long_distance_date"} onChange={inputOnChange} />
+                    <div className="flex items-center justify-between">
+                        <Label htmlFor={"title"}>Title</Label>
+                        <Input className={"w-[380px]"} disabled={deleteMode || loading} value={form.title} name={"title"} id={"title"} onChange={inputOnChange} />
+                    </div>
+                    <div className={"flex items-center justify-between"}>
+                        <Label htmlFor={"long_distance_date"}>Long distance date</Label>
+                    <Input className={"w-[380px]"} disabled={deleteMode || loading} value={form.long_distance_date} type={"date"} name={"long_distance_date"} id={"long_distance_date"} onChange={inputOnChange} />
+                    </div>
                     {error && <div className={"text-error"}>{error}</div>}
                     {deleteMode && <div className={"absolute z-10 w-full bottom-0 left-0 border-accent py-3 px-6 bg-background"}>
                         <h6>Are you sure you want to delete <b>{journal.title}</b>? This action cannot be undone.</h6>
@@ -85,13 +94,20 @@ const SettingsModal = ({journal, closeModal,isUserCreator} :
                     {isUserCreator && <Button disabled={deleteMode} variant={"destructive"} onClick={() => setDeleteMode(true)}>
                         Delete journal
                     </Button>}
-                    <Button disabled={deleteMode || loading} onClick={handleUpdate}>
-                        Update
-                    </Button>
+                    <div>
+                         <span
+                             className={"text-[12px] text-muted-foreground mr-2"}>Last Updated: {formattedDate?.toLocaleString("en-US", {
+                             year: 'numeric',
+                             month: "numeric",
+                             day: "numeric"
+                         })}</span>
+                        <Button disabled={deleteMode || loading} onClick={handleUpdate}>
+                            Update
+                        </Button></div>
                 </CardFooter>
             </Card>
         </Modal>
     );
 };
 
-export {SettingsModal, SETTINGS_JOURNAL_MODAL_ID };
+export {SettingsModal, SETTINGS_JOURNAL_MODAL_ID};

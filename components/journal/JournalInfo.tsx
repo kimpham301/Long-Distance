@@ -25,8 +25,6 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
         }
     }, [shareModal, settingsModal]);
 
-    const formattedDate = journal?.last_update ? new Date(journal?.last_update) : undefined
-
     const closeShareModal = () => {
         setShareModal(false);
     }
@@ -50,12 +48,7 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
         <>
             <div className="flex flex-col gap-2 h-full p-3 pr-0 md:min-w-[222px]">
                 <div>
-                    <h6 className={"font-semibold"}>{journal?.title}</h6>
-                    <span className={"text-sm text-accent-foreground"}>Profile updated: {formattedDate?.toLocaleString("en-US", {
-                        year: 'numeric',
-                        month: "numeric",
-                        day: "numeric"
-                    })}</span>
+                    <h6 className={"font-semibold"}>Relationship info</h6>
                 </div>
                 <div className={"flex-grow flex flex-col gap-3"}>
                     <div className={"flex items-center"}>
@@ -80,7 +73,19 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
                                     <div
                                         className="h-0.5 w-full bg-striped"></div>)}</Fragment>)
                         })}
+                        {userArr.length === 1 &&
+                            (<>
+                            <div className="h-0.5 w-full bg-striped"></div>
+                            <Button
+                                onClick={() => setShareModal(true)}
+                            className={`rounded-full w-20 h-20 flex justify-center items-center text-2xl font-bold shrink-0 bg-muted text-muted-foreground p-1`}>
+                                ?
+                            </Button>
+                            </>
+                            )
+                        }
                     </div>
+
                     {distanceDate && <div className={"rounded-2xl text flex flex-col items-center"}>
                         <span className={"text-[14px]"}>Distanced since</span>
                         <span className={"text-primary font-semibold"}>

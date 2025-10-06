@@ -20,17 +20,16 @@ const Header = async ({hideAuthBtn}: {hideAuthBtn?: boolean}) => {
         if (isMobile) {
             return (<div className="w-full flex justify-between items-center p-3 text-sm">
                 <div>
-                    <BookHeart />
+                    <BookHeart/>
                 </div>
-                <Link href={"/"} className="flex gap-5 items-center font-semibold text-lg text-primary">
-                    Long Distance
-                </Link>
+                <div>
+                    <JournalPicker currentUser={user?.id}/>
+                </div>
                 <div className={"flex gap-3 items-center"}>
                     {!hideAuthBtn && <MobileUserMenuButton/>}
                 </div>
             </div>)
-        }
-        else{
+        } else {
             return (<div className="w-full flex justify-between items-center p-8 text-sm">
                 <Link href={"/"} className="flex gap-5 items-center font-semibold text-xl text-primary">
                     Long Distance

@@ -71,7 +71,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       animation:{
-        'slide-down': 'slidedown 1s ease'
+        'slide-down': 'slidedown 1s ease',
       },
       keyframes:{
         slidedown:{
