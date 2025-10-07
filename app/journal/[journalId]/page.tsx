@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import JournalInput from "@/components/journal/JournalInput";
 import JournalInfo from "@/components/journal/JournalInfo";
 import {getJournalEntry, isMobileView} from "@/lib/serverHelpers";
-import {FrownIcon} from "lucide-react";
 import JournalEntriesList from "@/components/journal/JournalEntriesList";
+import {formatDateToYearFirst} from "@/utils/dateFormat";
 
 const USER_COLOR = ['bg-primary','bg-orange-400','bg-emerald-700']
 export default async function JournalPage({params}: {params: Promise<{journalId: string}>}) {
@@ -21,7 +20,8 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
     if (journalError) {
         redirect("/")
     }
-    const entries = await getJournalEntry(journalId, 0, 20)
+    const currentDate= new Date();
+    const entries = await getJournalEntry(journalId, new Date(new Date().setDate(currentDate.getDate() - 7)).toISOString(), currentDate.toISOString());
 
     const isMobile = await isMobileView();
     const userMap = new Map();
@@ -35,8 +35,9 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
     const isUserCreator = journal.created_user === data.claims.sub
     entries?.forEach((entry) => {
         let count = 0
-        const entryDate = new Date(entry?.created_at).toLocaleDateString()
-        entriesMap.set(entryDate, [...(entriesMap.get(entryDate) ?? []),entry])
+        const entryDate = new Date(entry?.created_at)
+        const formatDate = formatDateToYearFirst(entryDate)
+        entriesMap.set(formatDate, [...(entriesMap.get(formatDate) ?? []),entry])
         if(!userMap.has(entry?.profiles.email)){
             userMap.set(entry?.profiles.email, {
                 ...entry.profiles,
@@ -52,12 +53,7 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
                          isMobile={isMobile}
                          userMap={userMap}
                          isUserCreator={isUserCreator}/>
-            <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
-                <JournalInput journalId={journal?.generated_id}/>
-                {entries?.length  === 0 && <div className={"flex text-muted-foreground flex-col gap-2 h-full items-center justify-center"}>
-                    <FrownIcon className={"w-20 h-20"} />
-                    <p>This journal has no entry</p>
-                </div>}
+
                 <JournalEntriesList initMap={entriesMap}
                                     userMap={userMap}
                                     authUser={data.claims.sub}
@@ -65,8 +61,6 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
                                     currentItemsCount={entries?.length}
                                     journalId={journalId}
                 />
-            </div>
-
         </div>
     );
 }

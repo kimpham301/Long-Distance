@@ -35,7 +35,7 @@ const JournalEntry = (
     }, [viewHistory, id])
     return (
         <>
-            <div className={"p-3 border-b-accent-foreground mb-3 w-full relative animate-slide-down"}>
+            <div className={"px-3 py-5 border-b-accent-foreground mb-3 w-full relative"}>
                 <div className={"flex items-center relative"}>
                  <span className={`px-1 mr-2 rounded text-primary-foreground ${userColor}`}>
                 {userName}

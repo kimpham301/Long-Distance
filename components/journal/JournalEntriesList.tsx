@@ -1,14 +1,18 @@
 "use client"
-import React, {Fragment, useRef, useState} from 'react';
+import React, { useRef, useState} from 'react';
 import {Tables} from "@/database.types";
 import JournalEntry from "@/components/journal/JournalEntry";
+import {getJournalEntry} from "@/lib/serverHelpers";
+import JournalInput from "@/components/journal/JournalInput";
+import {FrownIcon} from "lucide-react";
+import {formatDateToYearFirst} from "@/utils/dateFormat";
 
-type ProfileWithColor = Tables<'profiles'> & {color: string}
-type EntriesWithProfile = Tables<'journal_history'> & {profiles: Tables<'profiles'>, entries_history: Tables<'entries_history'>[]}
+export type ProfileWithColor = Tables<'profiles'> & {color: string}
+export type EntriesWithProfile = Tables<'journal_history'> & {profiles: Tables<'profiles'>, entries_history: Tables<'entries_history'>[]}
 const JournalEntriesList =
     ({initMap, userMap, authUser, journalId, totalCount, currentItemsCount}
-     : {initMap:Map<string | undefined | null, EntriesWithProfile[]>,
-        userMap: Map<string | undefined | null, ProfileWithColor>,
+     : {initMap:Map<string, EntriesWithProfile[]>,
+        userMap: Map<string | null, ProfileWithColor>,
         authUser: string,
         journalId: string,
         totalCount: number,
@@ -20,28 +24,54 @@ const JournalEntriesList =
 
     const [currentNumItems, setCurrentNumItems] = React.useState<number>(currentItemsCount);
     const [entries, setEntries] = React.useState(initMap);
-    const entriesArr = Array.from(entries.entries())
+    // @ts-expect-error string can be compared
+        const dateArray = Array.from(entries.keys()).sort((a: string,b: string ) => a  - b)
 
-    const handleScroll = async () => {
+        const handleAddNewEntries = (newEntry: EntriesWithProfile) => {
+            const tempEntries = new Map(entries)
+            const dateFormat = formatDateToYearFirst(new Date(newEntry?.created_at))
+            tempEntries.set(dateFormat, [newEntry, ...tempEntries.get(dateFormat) ?? []])
+            setEntries(tempEntries)
+        }
+    const handleScroll =  () => {
         if(scrollableRef.current) {
             const {scrollTop, scrollHeight, clientHeight} = scrollableRef.current;
-            if((scrollTop + clientHeight > scrollHeight - 80) && !loading && (currentNumItems < totalCount)) {
+            if((scrollTop + clientHeight > scrollHeight - 24) && !loading && (currentNumItems < totalCount)) {
                 setLoading(true);
+                const oldestDate = dateArray.at(-1)
+                getJournalEntry(journalId, oldestDate ? new Date(new Date(oldestDate).setDate(new Date(oldestDate).getDate() - 7)).toISOString() : ""
+                    ,oldestDate ? new Date(oldestDate).toISOString() : "").then((data) => {
+                        setCurrentNumItems((prev) => prev + data?.length)
+                    const newEntriesMap = entries
+                    data?.forEach(d => {
+                        const entryDate = formatDateToYearFirst(new Date(d?.created_at));
+                        newEntriesMap.set(entryDate, [...(newEntriesMap.get(entryDate) ?? []),d as EntriesWithProfile])
+                    })
+                    setEntries(newEntriesMap)
+                    setLoading(false);
+                })
             }
         }
     }
+
     return (
-        <div ref={scrollableRef} className={"flex flex-col h-full overflow-auto p-3"} onScroll={handleScroll}>
-            {entriesArr && entriesArr.map(([date, entry]) => {
+        <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
+            <JournalInput journalId={journalId} handleNewEntry={handleAddNewEntries}/>
+            {totalCount  === 0 && <div className={"flex text-muted-foreground flex-col gap-2 h-full items-center justify-center"}>
+                <FrownIcon className={"w-20 h-20"} />
+                <p>This journal has no entry</p>
+            </div>}
+        <div ref={scrollableRef} className={"flex flex-col overflow-auto p-3"} onScroll={handleScroll}>
+            {dateArray && dateArray.map((date) => {
                 return (
-                    <Fragment key={date}>
+                    <div key={date} className={"animate-slide-down"}>
                         <div className={"w-full text-muted-foreground text-center relative animate-slide-down"}>
-                            <hr className={"mt-3"}/>
+                            <hr className={"top-2.5 absolute w-full"}/>
                             <span
-                                className={"bg-secondary absolute right-1/2 translate-x-1/2 top-0 px-2"}>{date}</span>
+                                className={"bg-secondary absolute right-1/2 translate-x-1/2 top-0 px-2 text-[14px]"}>{new Date(entries.get(date)?.[0].created_at ?? "").toLocaleDateString()}</span>
                         </div>
                         <div className={"flex flex-col-reverse"}>
-                            {entry?.map((et, index) => {
+                            {entries.get(date)?.map((et) => {
                                 const profile = userMap.get(et?.profiles.email)
                                 const lastUpdatedDate = et?.updated_at ? new Date(et?.updated_at) : ""
                                 const entryTime = et?.created_at ? new Date(et?.created_at) : ""
@@ -64,12 +94,13 @@ const JournalEntriesList =
                             }
                         </div>
 
-                    </Fragment>
+                    </div>
                 )
 
             })}
            {loading && <span className={"m-auto text-muted-foreground"}> Loading more...</span>}
 
+        </div>
         </div>
     );
     };

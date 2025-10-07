@@ -22,12 +22,12 @@ export async function  insertJournal(entry: {journal_id: string, content: string
         const {data, error} = await supabase
             .from('journal_history')
             .insert({...entry, user_id: user.user?.id})
-            .select("content, created_at, profiles(username)")
+            .select("*, profiles(username, email)")
+            .single()
         if(error){
             console.error("Error adding new entry:", error)
             return null
         }
-        revalidatePath("/journal");
         return data
     }
 }
@@ -64,13 +64,14 @@ export async function deleteJournal(journal_id: string){
         return "deleted"
     }
 }
-export async function getJournalEntry(journalId: string, start: number, limit: number) {
+export async function getJournalEntry(journalId: string, gte: string, lte: string) {
     const supabase = await createClient();
     const {data: entries, error : entriesError} = await supabase.from("journal_history")
         .select('*, entries_history(content, created_at), profiles(id,username, email, avatar_url)')
         .eq("journal_id", journalId)
         .order('created_at', { ascending: false})
-        .range(start, start + limit - 1)
+        .gte('created_at', gte)
+        .lte('created_at', lte)
     if(entriesError){
         return []
     }
