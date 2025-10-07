@@ -4,20 +4,25 @@ import {insertJournal, updateJournalEntry} from "@/lib/serverHelpers";
 import {Button} from "@/components/ui/button";
 import {ChevronRight} from "lucide-react";
 import Loading from "@/components/ui/Loading";
+import {EntriesWithProfile} from "@/components/journal/JournalEntriesList";
 
 const JournalInput =
-    ({journalId, entryId, content, closeEdit}
+    ({journalId, entryId, content, closeEdit, handleNewEntry}
      :{journalId?: string,
         entryId? :number,
         content?: string,
-    closeEdit? :() => void}) => {
+    closeEdit? :() => void,
+    handleNewEntry?: (newEntry: EntriesWithProfile) => void}) => {
     const [input, setInput] = React.useState<string>(content ?? "");
     const [loading, setLoading] = React.useState(false);
     const hanleInsertEntry = () => {
         setLoading(true)
         if(journalId) {
-            insertJournal({journal_id: journalId, content: input}).then(() => {
+            insertJournal({journal_id: journalId, content: input}).then((d) => {
                 setInput("");
+                if(d && handleNewEntry){
+                    handleNewEntry(d as unknown as EntriesWithProfile);
+                }
                 setLoading(false)
             })
         }
