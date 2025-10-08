@@ -156,7 +156,7 @@ export type Database = {
           id: number
           is_deleted: boolean
           journal_id: string
-          updated_at: string
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -165,7 +165,7 @@ export type Database = {
           id?: number
           is_deleted?: boolean
           journal_id: string
-          updated_at?: string
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -174,7 +174,7 @@ export type Database = {
           id?: number
           is_deleted?: boolean
           journal_id?: string
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -242,6 +242,48 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "journal"
             referencedColumns: ["generated_id"]
+          },
+        ]
+      }
+      journal_user_preference: {
+        Row: {
+          color: string | null
+          created_at: string
+          display_name: string | null
+          id: number
+          journal_id: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: number
+          journal_id: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: number
+          journal_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_user_preference_journal_id_fkey"
+            columns: ["journal_id"]
+            isOneToOne: false
+            referencedRelation: "journal"
+            referencedColumns: ["generated_id"]
+          },
+          {
+            foreignKeyName: "journal_user_preference_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
         ]
       }

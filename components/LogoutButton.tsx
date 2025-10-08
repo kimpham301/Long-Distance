@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {LogOutIcon} from "lucide-react";
 
-export function LogoutButton() {
+export function LogoutButton({isMobile}: {isMobile?: boolean}) {
   const router = useRouter();
 
   const logout = async () => {
@@ -14,5 +14,7 @@ export function LogoutButton() {
     router.push("/");
   };
 
-  return <Button variant={"ghost"} name={"Logout"} onClick={logout}><LogOutIcon /></Button>;
+  return <Button variant={"ghost"} name={"Logout"} onClick={logout} className={isMobile ? "justify-start text-xl [&_svg]:size-5": ""}>
+    <LogOutIcon /> {isMobile && "Logout"}
+  </Button>;
 }

@@ -26,7 +26,7 @@ const useCreateJournal = (
 
     useEffect(() => {
         setLoading(true);
-
+console.log("render")
         if (currentUserId && !exJournal) {
             supabase.from("user_journal_access").select("journal_id, is_default, journal(title)").eq("user_id", currentUserId).then((data) => {
                 setLoading(false)
@@ -36,7 +36,7 @@ const useCreateJournal = (
             })
         }
 
-    }, [supabase, currentUserId, exJournal, params])
+    }, [supabase, currentUserId, exJournal, params.journalId])
 
     const createJournalFormAction= async (formData: FormData ) => {
         const newTitle = (formData.get("title") || "") as string;
@@ -45,10 +45,11 @@ const useCreateJournal = (
             addOptimisticJournals({title: newTitle, generated_id: generated_id});
             const {data: journalReturn, error} = await supabase.from("journal")
                 .insert({title: newTitle, generated_id: generated_id, created_user: currentUserId})
-                .select("title, default, generated_id")
+                .select("title, default, generated_id, created_user")
                 .limit(1)
                 .single()
             if (journalReturn || !error) {
+                await supabase.from("journal_user_preference").upsert({journal_id: journalReturn.generated_id, color: "primary", user_id: journalReturn.created_user })
                 setJournals((prev) => [...prev, journalReturn]);
                 (document.getElementById(CREATE_JOURNAL_MODAL_ID)as HTMLDialogElement).close()
                 handleSnackbarAction( "New journal created", "success")

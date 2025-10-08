@@ -3,12 +3,12 @@ import {ThemeSwitcher} from "@/components/theme-switcher";
 import {AuthButton} from "@/components/AuthButton";
 import {isMobileView} from "@/lib/serverHelpers";
 import MobileUserMenuButton from "@/components/MobileUserMenuButton";
-import {BookHeart} from "lucide-react";
 import JournalPicker from "@/components/journal/JournalPicker";
 import {createClient} from "@/lib/supabase/server";
 import Link from "next/link";
+import JournalInfoDrawer from "@/components/JournalInfoDrawer";
 
-const Header = async ({hideAuthBtn}: {hideAuthBtn?: boolean}) => {
+const Header = async ({hideAuthBtn, showJournalInfo}: {hideAuthBtn?: boolean, showJournalInfo?: boolean}) => {
     const isMobile = await isMobileView();
     const supabase = await createClient();
 
@@ -20,13 +20,15 @@ const Header = async ({hideAuthBtn}: {hideAuthBtn?: boolean}) => {
         if (isMobile) {
             return (<div className="w-full flex justify-between items-center p-3 text-sm">
                 <div>
-                    <BookHeart/>
+                    {showJournalInfo && <JournalInfoDrawer user={user}/>}
                 </div>
                 <div>
-                    <JournalPicker currentUser={user?.id}/>
+                    <Link href={"/"} className="flex gap-5 items-center font-semibold text-xl text-primary">
+                        Long Distance
+                    </Link>
                 </div>
                 <div className={"flex gap-3 items-center"}>
-                    {!hideAuthBtn && <MobileUserMenuButton/>}
+                    {!hideAuthBtn && <MobileUserMenuButton user={user}/>}
                 </div>
             </div>)
         } else {

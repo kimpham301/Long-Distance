@@ -5,7 +5,7 @@ import {Edit2, SaveIcon} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {createClient} from "@/lib/supabase/client";
 import Loading from "@/components/ui/Loading";
-import {useUserContext} from "@/components/UserContextWrapper";
+import {useUserContext} from "@/components/user/UserContextWrapper";
 import {useParams} from "next/navigation";
 
 const UserDisplayNameEditor = () => {
