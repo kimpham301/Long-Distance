@@ -17,12 +17,12 @@ const MobileUserMenuButton = ({user}: {user: User | null}) => {
         </Button>
             <Drawer direction={"right"} open={open} handleClose={() => setOpen(false)}>
                     { user ? (
-                    <div className="flex flex-col gap-3 mt-10">
+                    <div className="flex flex-col gap-3 mt-10 h-full">
                         <UserProfileButton user={user} isMobile/>
                         <LogoutButton isMobile/>
                     </div>
                     ) : (
-                    <div className="flex flex-col gap-2 mt-10">
+                    <div className="flex flex-col gap-2 mt-10 h-full">
                         <Button asChild size="sm" variant={"outline"}>
                             <Link href="/auth/login">Sign in</Link>
                         </Button>

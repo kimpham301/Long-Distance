@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import JournalInfo from "@/components/journal/JournalInfo";
-import {getJournal, getJournalEntry, getTotalEntries, isMobileView} from "@/lib/serverHelpers";
+import { getJournalEntry, getTotalEntries, isMobileView} from "@/lib/serverHelpers";
 import JournalEntriesList from "@/components/journal/JournalEntriesList";
 import {formatDateToYearFirst} from "@/utils/dateFormat";
 import JournalUserPreferenceCard from "@/components/journal/JournalUserPreferenceCard";
@@ -20,13 +20,9 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
     const entriesCount = await getTotalEntries(journalId);
     const isMobile = await isMobileView();
 
-    let journal = null;
-    let isUserCreator = false
     const userMap = new Map();
-    if(!isMobile){
-        journal = await getJournal(journalId)
-        isUserCreator = journal.created_user === data.claims.sub
-        journal.journal_user_preference.map(up => {
+    const {data: journalUserPref} = await supabase.from("journal_user_preference").select("display_name, color, profiles(*)")
+    journalUserPref?.map(up => {
             if(!userMap.has(up?.profiles.id)){
                 userMap.set(up?.profiles.id, {
                         ...up.profiles,
@@ -35,7 +31,6 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
                 )
             }
         })
-    }
     const entriesMap = new Map();
 
     entries?.forEach((entry) => {
@@ -44,18 +39,16 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
         entriesMap.set(formatDate, [...(entriesMap.get(formatDate) ?? []),entry])
         })
 
-    if(journal?.journal_user_preference && !journal?.journal_user_preference.find(j => j.profiles.id === data.claims.sub)){
+    if(journalUserPref && !journalUserPref.find(j => j.profiles.id === data.claims.sub)){
         return <div className={"flex w-full h-full justify-center items-center"}>
             <JournalUserPreferenceCard user={{id: data.claims.sub,
         username: currentProfile?.username,
             email: currentProfile?.email}}
-            existingProfiles={journal?.journal_user_preference}/></div>
+            existingProfiles={journalUserPref}/></div>
     }
     return (
         <div className="flex-1 w-full flex gap-8 h-full">
-            {!isMobile && <><JournalInfo journal={journal}
-                                         isMobile={isMobile}
-                                         isUserCreator={isUserCreator}/>
+            {!isMobile && <><JournalInfo currentUser={data.claims.sub} />
                 <hr className={"border-border h-full"} style={{borderWidth: "0.5px"}}/>
 
             </>}

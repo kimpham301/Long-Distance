@@ -26,7 +26,6 @@ const useCreateJournal = (
 
     useEffect(() => {
         setLoading(true);
-console.log("render")
         if (currentUserId && !exJournal) {
             supabase.from("user_journal_access").select("journal_id, is_default, journal(title)").eq("user_id", currentUserId).then((data) => {
                 setLoading(false)

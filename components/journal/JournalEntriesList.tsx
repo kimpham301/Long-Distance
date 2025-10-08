@@ -21,7 +21,6 @@ const JournalEntriesList =
     const scrollableRef = useRef(null)
     const [loading, setLoading] =
         useState<boolean>(false);
-
     const [currentNumItems, setCurrentNumItems] = React.useState<number>(currentItemsCount);
     const [entries, setEntries] = React.useState(initMap);
     // @ts-expect-error string can be compared
@@ -70,7 +69,7 @@ const JournalEntriesList =
                             <span
                                 className={"bg-secondary absolute right-1/2 translate-x-1/2 top-0 px-2 text-[14px]"}>{new Date(entries.get(date)?.[0].created_at ?? "").toLocaleDateString()}</span>
                         </div>
-                        <div className={"flex flex-col-reverse"}>
+                        <div className={"flex flex-col"}>
                             {entries.get(date)?.map((et) => {
                                 const profile = userMap.get(et?.profiles.id) ?? {
                                     ...et.profiles,

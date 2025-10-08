@@ -23,7 +23,7 @@ const Drawer = ({children, direction = "left", handleClose, open, className, wid
                 {children}
             </div>}
         </div>
-            {open && <div onMouseDown={() => {handleClose()}} className={"fixed top-0 z-40 h-screen w-screen bg-backdrop opacity-40"}></div>}
+            {open && <div onMouseDown={() => {handleClose()}} className={"fixed top-0 left-0 z-40 h-screen w-screen bg-backdrop opacity-40"}></div>}
         </>
 
     );
