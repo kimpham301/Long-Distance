@@ -4,7 +4,7 @@ import {UPLOAD_AVATAR_MODAL, UploadAvatarModal} from "@/components/user/UploadAv
 import {Upload, UserRoundIcon} from "lucide-react";
 import { Button } from '../ui/button';
 import Image from "next/image";
-import {useUserContext} from "@/components/UserContextWrapper";
+import {useUserContext} from "@/components/user/UserContextWrapper";
 
 const UserAvatar = () => {
     const {profile, authId} = useUserContext()

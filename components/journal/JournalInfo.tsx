@@ -6,11 +6,15 @@ import {SHARE_JOURNAL_MODAL_ID, ShareJournalModal} from "@/components/journal/mo
 import Image from "next/image";
 import Link from "next/link";
 import {SETTINGS_JOURNAL_MODAL_ID, SettingsModal} from "@/components/journal/modal/SettingsModals";
+import {Tables} from "@/database.types";
 
-const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
-    journal: { generated_id: string, last_update: string | null, title: string | null, created_user: string, long_distance_date: string | null },
-    isMobile: boolean,
-    userMap: Map<string, {id: string,name: string, color: string, avatar_url: string}>
+export type UserPrefWithProfile = Pick<Tables<'journal_user_preference'>, 'color' | 'display_name'> & {profiles: Tables<'profiles'>}
+export type JournalInfoType  = 
+    Omit<Tables<'journal'>, 'id' | 'default' | 'created_at'> 
+    & {journal_user_preference: UserPrefWithProfile[]}
+const JournalInfo = ({journal, isMobile, isUserCreator}: {
+    journal: JournalInfoType | null,
+    isMobile?: boolean,
     isUserCreator: boolean
 }) => {
     const [shareModal, setShareModal] = useState(false);
@@ -31,7 +35,7 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
     const closeSettingsModal = () => {
         setSettingsModal(false);
     }
-    const userArr = Array.from(userMap.values())
+    const userArr = journal?.journal_user_preference ?? []
     const distanceDate = journal?.long_distance_date ? new Date(journal.long_distance_date) : null;
 
     const getDateDiff = () => {
@@ -43,27 +47,26 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
         const diff = Math.floor((now - distanceDate)/_MS_PER_DAY);
         return diff === 0 ? null : diff;
     }
-    if (isMobile) return null
+    if (isMobile || !journal) return null
     return (
         <>
             <div className="flex flex-col gap-2 h-full p-3 pr-0 md:min-w-[222px]">
-                <div>
-                    <h6 className={"font-semibold"}>Relationship info</h6>
-                </div>
+                <h6 className={"font-semibold"}>Relationship info</h6>
                 <div className={"flex-grow flex flex-col gap-3"}>
                     <div className={"flex items-center"}>
                         {userArr.map((user, index) => {
+                            const bgColor = "bg-"+ user.color
                             return (
-                                <Fragment key={user.id}>
-                                    <Link href={"/user/" + user.id}>
+                                <Fragment key={user.profiles.id}>
+                                    <Link href={"/user/" + user.profiles.id}>
                                 <span
-                                      className={`rounded-full w-20 h-20 flex shrink-0 ${user.color} p-1`}>
-                                {user.avatar_url
+                                      className={`rounded-full w-20 h-20 flex shrink-0 ${bgColor} p-1`}>
+                                {user.profiles.avatar_url
                                     ? (<Image className={`aspect-square h-full w-full rounded-full`}
-                                              src={user.avatar_url}
+                                              src={user.profiles.avatar_url}
                                               width={100}
                                               height={100}
-                                              alt={user.name ?? ""}
+                                              alt={user.profiles.username ?? ""}
                                         />
                                     )
                                     : <UserRoundIcon className={'m-auto w-12 h-12'}/>}
@@ -104,7 +107,6 @@ const JournalInfo = ({journal, isMobile, userMap, isUserCreator}: {
                     </Button>
                 </div>
             </div>
-            <hr className={"border-border h-full"} style={{borderWidth: "0.5px"}}/>
             {shareModal && <ShareJournalModal journal={{journalId: journal.generated_id, title: journal.title ?? ""}}
                                               userId={journal?.created_user} closeModal={closeShareModal}/>}
             {settingsModal && <SettingsModal journal={journal} closeModal={closeSettingsModal} isUserCreator={isUserCreator} />}

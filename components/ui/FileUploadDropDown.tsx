@@ -4,7 +4,7 @@ import {useSupabaseUpload} from "@/hooks/useUploadToBucket";
 import {Dropzone, DropzoneContent, DropzoneEmptyState} from "@/components/ui/Dropzone";
 import React, {useCallback} from "react";
 import {createClient} from "@/lib/supabase/client";
-import {useUserContext} from "@/components/UserContextWrapper";
+import {useUserContext} from "@/components/user/UserContextWrapper";
 
 const FileUploadAvatar = ({userId, closeModal} : {userId: string, closeModal: ()=> void}) => {
     const {changeAvatar} = useUserContext();

@@ -17,7 +17,7 @@ const JournalInput =
     const [loading, setLoading] = React.useState(false);
     const hanleInsertEntry = () => {
         setLoading(true)
-        if(journalId) {
+        if(journalId && !!input) {
             insertJournal({journal_id: journalId, content: input}).then((d) => {
                 setInput("");
                 if(d && handleNewEntry){
@@ -26,7 +26,7 @@ const JournalInput =
                 setLoading(false)
             })
         }
-        else if(closeEdit) {
+        else if(closeEdit && input) {
             updateJournalEntry({id: entryId, content: input}).then(() => {
                 closeEdit()
             })
@@ -57,12 +57,12 @@ const JournalInput =
             <textarea
                 id={"entry-textarea"}
                 value={input}
-                      autoFocus={!!closeEdit}
-                      disabled={loading}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder={ "New entry..."}
-                      className={"w-full h-[90px] p-2 rounded-sm resize-none"}/>
-            <Button id="entry-button" onClick={hanleInsertEntry}><ChevronRight/></Button>
+                autoFocus={!!closeEdit}
+                disabled={loading}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={ "New entry..."}
+                className={"w-full h-[90px] p-2 rounded-sm resize-none"}/>
+            <Button disabled={loading || !input}  id="entry-button" onClick={hanleInsertEntry}><ChevronRight/></Button>
         </div>
     );
 };

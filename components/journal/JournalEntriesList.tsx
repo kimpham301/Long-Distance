@@ -72,7 +72,10 @@ const JournalEntriesList =
                         </div>
                         <div className={"flex flex-col-reverse"}>
                             {entries.get(date)?.map((et) => {
-                                const profile = userMap.get(et?.profiles.email)
+                                const profile = userMap.get(et?.profiles.id) ?? {
+                                    ...et.profiles,
+                                    color: 'bg-gray-400'
+                                }
                                 const lastUpdatedDate = et?.updated_at ? new Date(et?.updated_at) : ""
                                 const entryTime = et?.created_at ? new Date(et?.created_at) : ""
                                 if (et?.id && profile) {

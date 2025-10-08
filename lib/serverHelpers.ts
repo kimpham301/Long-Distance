@@ -3,6 +3,7 @@ import {createClient} from "@/lib/supabase/server";
 import {revalidatePath} from "next/cache";
 import {headers} from "next/headers";
 import {userAgentFromString} from "next/server";
+import {redirect} from "next/navigation";
 
 export async function isMobileView(){
     const headersList = await headers();
@@ -11,6 +12,17 @@ export async function isMobileView(){
     return device.type === 'mobile';
 }
 
+export async function  getJournal(journalId: string) {
+    const supabase = await createClient();
+    const {data: journal, error: journalError} = await supabase.from("journal")
+        .select(`generated_id, last_update, created_user, title, long_distance_date, journal_user_preference(color,display_name, profiles(*))`)
+        .eq("generated_id", journalId)
+        .single();
+    if (journalError) {
+        redirect("/")
+    }
+    return journal;
+}
 export async function  insertJournal(entry: {journal_id: string, content: string}){
     const supabase = await createClient();
     const {data: user, error: userError} = await supabase.auth.getUser()
@@ -63,6 +75,18 @@ export async function deleteJournal(journal_id: string){
         revalidatePath(`/journal/${journal_id}`);
         return "deleted"
     }
+}
+export async function getTotalEntries(journal_id: string){
+    const supabase = await createClient();
+
+    const {count, error: countError} = await supabase.from("journal_history")
+        .select('*', {count: "exact", head: true})
+        .eq('journal_id', journal_id)
+    if(countError)
+    {
+        return 0
+    }
+    else return count
 }
 export async function getJournalEntry(journalId: string, gte: string, lte: string) {
     const supabase = await createClient();

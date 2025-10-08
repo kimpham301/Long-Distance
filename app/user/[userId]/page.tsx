@@ -2,7 +2,7 @@ import React from 'react';
 import {createClient} from "@/lib/supabase/server";
 import UserDisplayNameEditor from "@/components/user/UserDisplayNameEditor";
 import UserAvatar from "@/components/user/UserAvatar";
-import {UserContextWrapper} from "@/components/UserContextWrapper";
+import {UserContextWrapper} from "@/components/user/UserContextWrapper";
 import {redirect} from "next/navigation";
 
 export default async function UserProfilePage  ({params}:{params: Promise<{userId: string}>}){

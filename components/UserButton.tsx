@@ -1,17 +1,12 @@
-"use client";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import { UserIcon} from "lucide-react";
 import {User} from "@supabase/auth-js";
+import Link from "next/link";
 
 export function UserProfileButton({user, isMobile} : {user: User | null, isMobile?: boolean}) {
-    const router = useRouter();
-
-    const userRoute = async () => {
-        router.push(`/user/${user?.id}`);
-    };
-
     if(user){
-        return <Button variant={"ghost"} name={"User Profiles"} onClick={userRoute}><UserIcon /> {isMobile && "Profile"}</Button>;
+        return(
+        <Button name={"User Profile"} asChild size="sm" variant={"ghost"} className={isMobile ? "justify-start text-xl [&_svg]:size-5": ""}>
+            <Link href={`/user/${user?.id}`}><UserIcon /> {isMobile && "Profile"}</Link></Button>)
     }
 }
