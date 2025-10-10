@@ -3,7 +3,6 @@ import {createClient} from "@/lib/supabase/server";
 import {revalidatePath} from "next/cache";
 import {headers} from "next/headers";
 import {userAgentFromString} from "next/server";
-import {redirect} from "next/navigation";
 
 export async function isMobileView(){
     const headersList = await headers();
@@ -15,11 +14,11 @@ export async function isMobileView(){
 export async function  getJournal(journalId: string) {
     const supabase = await createClient();
     const {data: journal, error: journalError} = await supabase.from("journal")
-        .select(`generated_id, last_update, created_user, title, long_distance_date, journal_user_preference(color,display_name, profiles(*))`)
+        .select(`generated_id, last_update, created_user, title, long_distance_date ,user_journal_access(is_default), journal_user_preference(color,display_name, profiles(*))`)
         .eq("generated_id", journalId)
         .single();
     if (journalError) {
-        redirect("/")
+        return null
     }
     return journal;
 }

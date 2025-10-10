@@ -39,7 +39,7 @@ const JournalPicker = ({currentUser}: { currentUser?: string }) => {
         return null
     }
     if (loading) {
-        return <Loading className={"top-5"}/>
+        return <div className={"w-24 bg-muted rounded-md h-9 animate-pulse"}/>
     }
 
 

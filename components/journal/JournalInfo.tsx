@@ -22,6 +22,7 @@ const JournalInfo = ({currentUser} :{currentUser: string}) => {
     const [journal, setJournal] = useState<JournalInfoType>()
 
     useEffect(() => {
+        setJournal(undefined)
         setJournalLoading(true);
         getJournal(params.journalId).then(d => {
             if(d){
