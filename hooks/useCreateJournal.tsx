@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {CREATE_JOURNAL_MODAL_ID} from "@/components/journal/modal/CreateJournalModal";
 import {createClient} from "@/lib/supabase/client";
-import {useParams} from "next/navigation";
 
 const useCreateJournal = (
     currentUserId: string | undefined,
     exJournal?: { generated_id: string, title: string | null }[]) => {
     const supabase = createClient()
-    const params = useParams<{journalId: string}>()
     const [loading, setLoading] = useState(true);
     const [journals, setJournals] = useState<{ generated_id: string, title: string | null }[]>( exJournal ?? []);
     const [snackbar, setSnackbar] = useState<{message: string, type: "success" | "error"} | null>();
@@ -35,7 +33,7 @@ const useCreateJournal = (
             })
         }
 
-    }, [supabase, currentUserId, exJournal, params.journalId])
+    }, [supabase, currentUserId, exJournal])
 
     const createJournalFormAction= async (formData: FormData ) => {
         const newTitle = (formData.get("title") || "") as string;

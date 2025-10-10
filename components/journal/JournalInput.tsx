@@ -60,7 +60,7 @@ const JournalInput =
                 autoFocus={!!closeEdit}
                 disabled={loading}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={ "New entry..."}
+                placeholder={"How's your day?"}
                 className={"w-full h-[90px] p-2 rounded-sm resize-none"}/>
             <Button disabled={loading || !input}  id="entry-button" onClick={hanleInsertEntry}><ChevronRight/></Button>
         </div>
