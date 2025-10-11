@@ -72,6 +72,7 @@ export default {
       },
       animation:{
         'slide-down': 'slidedown 1s ease',
+        'flash': 'flash 0.5s ease'
       },
       keyframes:{
         slidedown:{
@@ -81,6 +82,14 @@ export default {
             },
             '100%':{ transform: "translateY(0%)",
                       opacity: "1",}
+        },
+        flash:{
+          '0%, 100%':{
+            opacity: "1",
+          },
+          '50%':{
+            opacity: "0"
+          }
         }
       }
     },

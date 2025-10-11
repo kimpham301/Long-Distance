@@ -33,7 +33,7 @@ export async function  insertJournal(entry: {journal_id: string, content: string
         const {data, error} = await supabase
             .from('journal_history')
             .insert({...entry, user_id: user.user?.id})
-            .select("*, profiles(username, email)")
+            .select("*, profiles(id, username, email)")
             .single()
         if(error){
             console.error("Error adding new entry:", error)

@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Tables} from "@/database.types";
 import JournalEntry from "@/components/journal/JournalEntry";
 import {getJournalEntry} from "@/lib/serverHelpers";
@@ -23,15 +23,18 @@ const JournalEntriesList =
         useState<boolean>(false);
     const [currentNumItems, setCurrentNumItems] = React.useState<number>(currentItemsCount);
     const [entries, setEntries] = React.useState(initMap);
-    // @ts-expect-error string can be compared
-        const dateArray = Array.from(entries.keys()).sort((a: string,b: string ) => a  - b)
+    const [newEntry, setNewEntry] = React.useState<EntriesWithProfile & {formatDate: string} | null>();
 
+        const dateArray = Array.from(entries.keys()).sort((a: string,b: string ) => b.localeCompare(a))
         const handleAddNewEntries = (newEntry: EntriesWithProfile) => {
             const tempEntries = new Map(entries)
             const dateFormat = formatDateToYearFirst(new Date(newEntry?.created_at))
             tempEntries.set(dateFormat, [newEntry, ...tempEntries.get(dateFormat) ?? []])
+            console.log(tempEntries)
             setEntries(tempEntries)
+            setNewEntry({...newEntry, formatDate: dateFormat})
         }
+
     const handleScroll =  () => {
         if(scrollableRef.current) {
             const {scrollTop, scrollHeight, clientHeight} = scrollableRef.current;
@@ -53,6 +56,14 @@ const JournalEntriesList =
         }
     }
 
+        useEffect(() => {
+            if(newEntry){
+                const allEntryOfDate = entries.get(newEntry.formatDate)
+                if(allEntryOfDate && allEntryOfDate?.length > 1)
+                document.getElementById('container' + newEntry.id)?.classList.add('animate-flash')
+            }
+        }, [newEntry]);
+
     return (
         <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
             <JournalInput journalId={journalId} handleNewEntry={handleAddNewEntries}/>
@@ -67,10 +78,12 @@ const JournalEntriesList =
                         <div className={"w-full text-muted-foreground text-center relative animate-slide-down"}>
                             <hr className={"top-2.5 absolute w-full"}/>
                             <span
-                                className={"bg-secondary absolute right-1/2 translate-x-1/2 top-0 px-2 text-[14px]"}>{new Date(entries.get(date)?.[0].created_at ?? "").toLocaleDateString()}</span>
+                                className={"bg-secondary absolute right-1/2 translate-x-1/2 top-0 px-2 text-[14px]"}>
+                                {new Date(entries.get(date)?.[0].created_at ?? "").toLocaleDateString()}
+                            </span>
                         </div>
                         <div className={"flex flex-col"}>
-                            {entries.get(date)?.map((et) => {
+                            {entries.get(date)?.map((et, index) => {
                                 const profile = userMap.get(et?.profiles.id) ?? {
                                     ...et.profiles,
                                     color: 'bg-gray-400'
