@@ -62,7 +62,7 @@ const JournalEntriesList =
                 if(allEntryOfDate && allEntryOfDate?.length > 1)
                 document.getElementById('container' + newEntry.id)?.classList.add('animate-flash')
             }
-        }, [newEntry]);
+        }, [entries,newEntry]);
 
     return (
         <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
@@ -83,7 +83,7 @@ const JournalEntriesList =
                             </span>
                         </div>
                         <div className={"flex flex-col"}>
-                            {entries.get(date)?.map((et, index) => {
+                            {entries.get(date)?.map((et) => {
                                 const profile = userMap.get(et?.profiles.id) ?? {
                                     ...et.profiles,
                                     color: 'bg-gray-400'
