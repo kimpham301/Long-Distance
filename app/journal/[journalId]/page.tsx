@@ -16,7 +16,7 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
     }
     const currentDate= new Date();
     const {data: currentProfile} = await supabase.from("profiles").select("email, username").eq('id', data?.claims.sub).single()
-    const entries = await getJournalEntry(journalId, new Date(new Date().setDate(currentDate.getDate() - 7)).toISOString(), currentDate.toISOString());
+    const entries = await getJournalEntry(journalId, new Date(new Date().setDate(currentDate.getDate() - 14)).toISOString(), currentDate.toISOString());
     const entriesCount = await getTotalEntries(journalId);
     const isMobile = await isMobileView();
 

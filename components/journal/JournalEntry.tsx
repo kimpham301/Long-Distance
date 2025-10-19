@@ -40,7 +40,7 @@ const JournalEntry = (
                  <span className={`px-1 mr-2 rounded text-primary-foreground ${userColor}`}>
                 {userName}
             </span>
-                    <div className={"text-xs absolute w-full flex justify-center gap-2"}>{lastUpdated && <Button onClick={() => {
+                    <div className={"text-xs absolute left-1/2 translate-x-[-50%] flex justify-center gap-2"}>{lastUpdated && <Button onClick={() => {
                         setViewHistory(true)
                     }} variant={"ghost"} className={"p-0 h-4"}><History
                         className={"w-4 h-4 text-muted-foreground"}/></Button>} {entryDate}</div>
