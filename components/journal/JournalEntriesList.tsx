@@ -1,78 +1,36 @@
 "use client"
-import React, {useEffect, useRef, useState} from 'react';
+import React from 'react';
 import {Tables} from "@/database.types";
 import JournalEntry from "@/components/journal/JournalEntry";
-import {getJournalEntry} from "@/lib/serverHelpers";
 import JournalInput from "@/components/journal/JournalInput";
 import {FrownIcon} from "lucide-react";
-import {formatDateToYearFirst} from "@/utils/dateFormat";
+import {useJournalContext} from "@/components/journal/JournalContextWrapper";
 
 export type ProfileWithColor = Tables<'profiles'> & {color: string}
-export type EntriesWithProfile = Tables<'journal_history'> & {profiles: Tables<'profiles'>, entries_history: Tables<'entries_history'>[]}
+
 const JournalEntriesList =
-    ({initMap, userMap, authUser, journalId, totalCount, currentItemsCount}
-     : {initMap:Map<string, EntriesWithProfile[]>,
+    ({ userMap, authUser}
+     : {
         userMap: Map<string | null, ProfileWithColor>,
         authUser: string,
-        journalId: string,
-        totalCount: number,
-        currentItemsCount:number
     }) => {
-    const scrollableRef = useRef(null)
-    const [loading, setLoading] =
-        useState<boolean>(false);
-    const [currentNumItems, setCurrentNumItems] = React.useState<number>(currentItemsCount);
-    const [entries, setEntries] = React.useState(initMap);
-    const [newEntry, setNewEntry] = React.useState<EntriesWithProfile & {formatDate: string} | null>();
-
-        const dateArray = Array.from(entries.keys()).sort((a: string,b: string ) => b.localeCompare(a))
-        const handleAddNewEntries = (newEntry: EntriesWithProfile) => {
-            const tempEntries = new Map(entries)
-            const dateFormat = formatDateToYearFirst(new Date(newEntry?.created_at))
-            tempEntries.set(dateFormat, [newEntry, ...tempEntries.get(dateFormat) ?? []])
-            console.log(tempEntries)
-            setEntries(tempEntries)
-            setNewEntry({...newEntry, formatDate: dateFormat})
-        }
-
-    const handleScroll =  () => {
-        if(scrollableRef.current) {
-            const {scrollTop, scrollHeight, clientHeight} = scrollableRef.current;
-            if((scrollTop + clientHeight > scrollHeight - 24) && !loading && (currentNumItems < totalCount)) {
-                setLoading(true);
-                const oldestDate = dateArray.at(-1)
-                getJournalEntry(journalId, oldestDate ? new Date(new Date(oldestDate).setDate(new Date(oldestDate).getDate() - 7)).toISOString() : ""
-                    ,oldestDate ? new Date(oldestDate).toISOString() : "").then((data) => {
-                        setCurrentNumItems((prev) => prev + data?.length)
-                    const newEntriesMap = entries
-                    data?.forEach(d => {
-                        const entryDate = formatDateToYearFirst(new Date(d?.created_at));
-                        newEntriesMap.set(entryDate, [...(newEntriesMap.get(entryDate) ?? []),d as EntriesWithProfile])
-                    })
-                    setEntries(newEntriesMap)
-                    setLoading(false);
-                })
-            }
-        }
-    }
-
-        useEffect(() => {
-            if(newEntry){
-                const allEntryOfDate = entries.get(newEntry.formatDate)
-                if(allEntryOfDate && allEntryOfDate?.length > 1)
-                document.getElementById('container' + newEntry.id)?.classList.add('animate-flash')
-            }
-        }, [entries,newEntry]);
+        const {
+            scrollableRef,
+            handleScroll,
+            entries,
+            loading,
+            formattedDateArr
+        } = useJournalContext();
 
     return (
         <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
-            <JournalInput journalId={journalId} handleNewEntry={handleAddNewEntries}/>
-            {totalCount  === 0 && <div className={"flex text-muted-foreground flex-col gap-2 h-full items-center justify-center"}>
+            <JournalInput />
+            {entries.size  === 0 && <div className={"flex text-muted-foreground flex-col gap-2 h-full items-center justify-center"}>
                 <FrownIcon className={"w-20 h-20"} />
                 <p>This journal has no entry</p>
             </div>}
         <div ref={scrollableRef} className={"flex flex-col overflow-auto p-3"} onScroll={handleScroll}>
-            {dateArray && dateArray.map((date) => {
+            {formattedDateArr && formattedDateArr.map((date) => {
                 return (
                     <div key={date} className={"animate-slide-down"}>
                         <div className={"w-full text-muted-foreground text-center relative animate-slide-down"}>

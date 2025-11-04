@@ -6,6 +6,7 @@ import JournalEntriesList from "@/components/journal/JournalEntriesList";
 import {formatDateToYearFirst} from "@/utils/dateFormat";
 import JournalUserPreferenceCard from "@/components/journal/JournalUserPreferenceCard";
 import React from "react";
+import {JournalContextWrapper} from "@/components/journal/JournalContextWrapper";
 
 export default async function JournalPage({params}: {params: Promise<{journalId: string}>}) {
     const supabase = await createClient();
@@ -53,13 +54,11 @@ export default async function JournalPage({params}: {params: Promise<{journalId:
 
             </>}
 
-            <JournalEntriesList initMap={entriesMap}
-                                userMap={userMap}
+            <JournalContextWrapper journalId={journalId} entries={entriesMap} currentItemsCount={entries?.length} totalItemsCount={entriesCount ?? 0}>
+            <JournalEntriesList userMap={userMap}
                                     authUser={data.claims.sub}
-                                    totalCount={entriesCount ?? 0}
-                                    currentItemsCount={entries?.length}
-                                    journalId={journalId}
                 />
+            </JournalContextWrapper>
         </div>
     );
 }

@@ -114,12 +114,12 @@ export async function updateJournalEntry(entry: {id: number | undefined, content
             .from('journal_history')
             .update({content: entry.content, user_id: user.user?.id, updated_at: new Date().toLocaleString()})
             .eq("id", entry.id )
-            .select("content, created_at, profiles(username)")
+            .select("id, content, created_at, profiles(username), entries_history(content, created_at)")
+            .single()
         if(error){
             console.error("Error update entry:", error)
             return null
         }
-        revalidatePath("/journal");
         return data
     }
 }
