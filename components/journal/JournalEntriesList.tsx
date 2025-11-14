@@ -23,7 +23,7 @@ const JournalEntriesList =
         } = useJournalContext();
 
     return (
-        <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3">
+        <div className="flex flex-col flex-grow gap-2 bg-secondary h-full rounded-sm p-3 w-full">
             <JournalInput />
             {entries.size  === 0 && <div className={"flex text-muted-foreground flex-col gap-2 h-full items-center justify-center"}>
                 <FrownIcon className={"w-20 h-20"} />
